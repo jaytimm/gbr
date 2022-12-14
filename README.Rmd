@@ -1,0 +1,249 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+
+
+# User friendly extensions to Project Gutenberg
+
+> I remembered the dressmaker's smile!!
+
+
+## Intro
+
+Working with raw text files from Project Gutenberg.  Some simple, parallelized functions for text extraction, sentence tokenization, and simple search.
+
+See [this repository](https://github.com/pgcorpus/gutenberg) for a quick/easy download of full Project Gutenberg corpus.  No need to process the raw files.  Output includes a nice meta file summarizing text included in download.
+
+
+```{r include=FALSE}
+path_to_raw_pg_files <- '/home/jtimm/gutenberg/data/raw/'
+path_to_out_folder <- '/home/jtimm/gutenberg/data/sentences/'
+```
+
+
+
+
+## Extraction & sentence tokenization
+
+
+### Extraction function
+
+Taken from [this R package](https://github.com/patperry/r-corpus/blob/master/R/gutenberg.R), and tweaked ever so slightly.
+
+```{r}
+pg_extract_text <- function(lines){
+    # number the lines
+    i <- seq_along(lines)
+
+    # find the empty lines
+    empty <- (lines == "")
+
+    # find the end of the Project Gutenberg header
+    start_pat <- paste("^[*][*][*].*PROJECT GUTENBERG.*[*][*][*]",
+                       "END.*SMALL PRINT", sep = "|")
+    start_match <- grep(start_pat, lines)
+    if (length(start_match) == 0) {
+        start_match <- 0
+    }
+    start <- start_match[[1]] + 1
+
+    # look for the encoding, and convert to UTF-8
+    enc_pat <- "Character set encoding:[[:space:]]*(.*)[[:space:]]*$"
+    enc_match <- grep(enc_pat, lines[seq_len(start - 1)])
+    if (length(enc_match) > 0) {
+        enc <- sub(enc_pat, "\\1", lines[enc_match[[1]]])
+        if (!enc %in% c("ASCII", "UTF-8")) {
+
+          tryCatch({
+            lines <- iconv(lines, enc, "UTF-8")},
+            error = function(e) {lines = "REMOVE"})
+        }
+    }
+
+    start <- min(which(start <= i & !empty))
+
+    # find the start of the Project Gutenberg footer
+    end_pat <- paste("^End of .*Project Gutenberg.*",
+                     "\\\\*\\\\*\\\\*.*END OF.*PROJECT GUTENBERG", sep = "|")
+
+    end_match <- grep(end_pat, lines)
+    if (length(end_match) == 0) {
+        end_match <- length(lines) + 1
+    }
+    end <- end_match[[1]] - 1
+
+    # skip the empty lines at the end
+    end <- max(which(i <= end & !empty))
+
+    # skip the production notes at the start of the text
+    note_start_pat <- paste("produced by",
+                            "prepared by",
+                            "transcribed from",
+                            "project gutenberg",
+                            "^[*][*][*]",
+                            "^note: ",
+                            "^special thanks",
+                            "^this is a retranscription",
+                            sep = "|")
+    note_start <- grep(note_start_pat, lines, ignore.case = TRUE)
+    note_start <- note_start[start <= note_start & note_start <= end]
+
+    ## error happens in here -- 
+    while (length(note_start) && note_start[[1]] == start) {
+        # the note ends at the first empty line
+        note_end <- min(which(note_start[[1]] <= i & empty))
+
+        start <- min(which(note_end + 1 <= i & !empty))
+        note_start <- note_start[start <= note_start]
+    }
+
+    # concatenate the content lines
+    if(!is.finite(start)){'REMOVE'} else{
+      paste(lines[start:end], collapse = "\n")
+     }
+}
+```
+
+
+
+
+### Sentence tokenization & output function
+
+```{r}
+pg_tokenize_sentences <- function(x){
+  
+  lapply(x, function(y){
+    id <- gsub('^.*/', '',  y)
+    id <- gsub('_.*$', '', id)
+    lines <- readLines(y, 
+                       encoding = "UTF-8", 
+                       warn = FALSE) 
+    
+    lines0 <- pg_extract_text(lines)
+    
+    if(lines[1] == 'REMOVE'){} else{
+      
+      tryCatch({
+        x0 <- data.frame(doc_id = id,
+                         text = lines0) |>
+          text2df::tif2sentence() |> 
+          data.table::setDT()
+        
+        x0[, text := trimws(gsub('\n', ' ', text))]
+        #setwd(out_dir)
+        saveRDS(x0, paste0(id, '.rds'))
+        },
+        
+        error = function(e) {})
+      }
+  })
+}
+```
+
+
+
+### Batches, parallel
+
+```{r eval=FALSE}
+pafs <- list.files(path = path_to_raw_pg_files,
+                   full.names = T)
+
+batches <- split(pafs, ceiling(seq_along(pafs)/50))
+
+setwd(path_to_out_folder)
+
+clust <- parallel::makeCluster(10)
+parallel::clusterExport(cl = clust,
+                        varlist = c('pg_tokenize_sentences',
+                                    'pg_extract_text',
+                                    'batches'),
+                        envir = environment())
+
+pbapply::pblapply(X = batches, 
+                  FUN = pg_tokenize_sentences, 
+                  cl = clust)
+
+parallel::stopCluster(clust)
+```
+
+
+```{r include=FALSE}
+path_to_meta <- '/home/jtimm/gutenberg/metadata/'
+```
+
+
+```{r}
+setwd(path_to_meta)
+pg_meta <- read.csv('metadata.csv')
+```
+
+
+
+
+## Simple regex search
+
+### Search in parallel
+
+```{r}
+sentences <- list.files(path = path_to_out_folder,
+                        full.names = T)
+
+
+pg_search_bookwise <- function(x, 
+                               pattern, 
+                               book_sample = NULL,
+                               cores = 6){
+  
+  search_bookwise <- function(x, pattern){ 
+    lapply(x, function(q){
+      y <- readRDS(q)
+      subset(y, grepl(pattern, text)) }) |> 
+      data.table::rbindlist() }
+  
+  if(!is.null(book_sample)){x <- sample(x, book_sample)}
+  batches <- split(x, ceiling(seq_along(x)/50))
+  
+  clust <- parallel::makeCluster(cores)
+  parallel::clusterExport(cl = clust,
+                          varlist = c('search_bookwise',
+                                      'batches'),
+                          envir = environment())
+  
+  out <- pbapply::pblapply(X = batches, 
+                    FUN = function(x) search_bookwise(x, 
+                                                      pattern = pattern), 
+                    cl = clust)
+  
+  parallel::stopCluster(clust)
+  out1 <- out |> data.table::rbindlist()
+  out1[, doc_id := gsub('\\..*$', '', doc_id)]
+  return(out1)
+}
+```
+
+
+
+### Output
+
+```{r}
+library(dplyr)
+remember99 <- sentences |> pg_search_bookwise(pattern = '^I remember',
+                                              book_sample = 10000,
+                                              cores = 10)
+
+remember99 |>
+  left_join(pg_meta, by = c('doc_id' = 'id')) |>
+  na.omit() |>
+  mutate(text = gsub('"$|”$', '', text)) |>
+  distinct(text, .keep_all = T) |>
+  mutate(nc = nchar(text)) |>
+  filter(nc < 55) |>
+  group_by(authoryearofbirth) |>
+  slice(1) |> ungroup() |>
+  select(authoryearofbirth, text) |>
+  arrange(authoryearofbirth) |>
+  knitr::kable()
+```
