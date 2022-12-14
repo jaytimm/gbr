@@ -8,7 +8,7 @@ output:
 
 # User friendly extensions to Project Gutenberg
 
-> I remembered the dressmaker's smile!!
+> I remember the dressmaker's smile!!
 
 
 ## Intro
@@ -188,10 +188,6 @@ pg_meta <- read.csv('metadata.csv')
 ### Search in parallel
 
 ```{r}
-sentences <- list.files(path = path_to_out_folder,
-                        full.names = T)
-
-
 pg_search_bookwise <- function(x, 
                                pattern, 
                                book_sample = NULL,
@@ -227,6 +223,12 @@ pg_search_bookwise <- function(x,
 
 
 ### Output
+
+```{r}
+sentences <- list.files(path = path_to_out_folder,
+                        full.names = T)
+```
+
 
 ```{r message=FALSE, warning=FALSE}
 library(dplyr)
