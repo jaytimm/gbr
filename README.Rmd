@@ -13,7 +13,7 @@ output:
 
 ## Intro
 
-Working with raw text files from Project Gutenberg.  Some simple, parallelized functions for text extraction, sentence tokenization, and simple search.
+Working with raw text files from Project Gutenberg. Some simple, parallelized functions for text extraction, sentence tokenization, and simple search. Extensions assume corpus has been downloaded, lives locally.
 
 See [this repository](https://github.com/pgcorpus/gutenberg) for a quick/easy download of full Project Gutenberg corpus.  No need to process the raw files.  Output includes a nice meta file summarizing text included in download.
 
@@ -230,17 +230,17 @@ pg_search_bookwise <- function(x,
 
 ```{r message=FALSE, warning=FALSE}
 library(dplyr)
-remember99 <- sentences |> pg_search_bookwise(pattern = '^I remember',
-                                              book_sample = 10000,
-                                              cores = 10)
-
-remember99 |>
+sentences |> 
+  
+  pg_search_bookwise(pattern = '^I remember ',
+                     book_sample = 20000,
+                     cores = 10) |>
+  
   left_join(pg_meta, by = c('doc_id' = 'id')) |>
   na.omit() |>
   mutate(text = gsub('"$|”$', '', text)) |>
   distinct(text, .keep_all = T) |>
-  mutate(nc = nchar(text)) |>
-  filter(nc < 55) |>
+  filter(nchar(text) < 55) |>
   group_by(authoryearofbirth) |>
   slice(1) |> ungroup() |>
   select(authoryearofbirth, text) |>
