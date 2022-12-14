@@ -228,7 +228,7 @@ pg_search_bookwise <- function(x,
 
 ### Output
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 remember99 <- sentences |> pg_search_bookwise(pattern = '^I remember',
                                               book_sample = 10000,
