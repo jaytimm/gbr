@@ -1,7 +1,10 @@
 # User friendly extensions to Project Gutenberg
 
-> I remembered the glowworms and millipeds. I remembered the spectre. I
-> remembered the dressmaker’s smile!!
+> I remembered the glowworms and millipeds.
+
+> I remembered the spectre.
+
+> I remembered the dressmaker’s smile!!
 
 ## Intro
 
@@ -176,52 +179,53 @@ gbr::gbsearch(pattern = '^I remembered',
 
 | authoryearofbirth | text                                                   |
 |------------------:|:----------------------------------------------------|
-|              1763 | I remembered the glowworms and millipeds.              |
-|              1802 | I remembered him well.                                 |
-|              1804 | I remembered what had occurred the previous evening.   |
-|              1805 | I remembered a few of these books.                     |
-|              1808 | I remembered its striking features so well.            |
-|              1814 | I remembered the voice now.                            |
-|              1815 | I remembered the red blanket on my saddle.             |
+|              1799 | I remembered the dressmaker’s smile!                   |
+|              1805 | I remembered it first.                                 |
+|              1806 | I remembered her counsels and her warnings.            |
+|              1807 | I remembered it, it was sich an outlandish name like.  |
+|              1814 | I remembered this, and prayed for strength.            |
 |              1818 | I remembered the lazo.                                 |
-|              1819 | I remembered that Bartleby never left the office.      |
-|              1822 | I remembered old Balerma, and felt deeply for them.    |
-|              1824 | I remembered at last.                                  |
-|              1827 | I remembered that I was thy accepted knight.           |
-|              1830 | I remembered, aloud and abruptly.                      |
-|              1831 | I remembered what father had said about Polly.         |
-|              1835 | I remembered this as I looked at Mrs. Darrell.         |
-|              1836 | I remembered what Mother Gaillarde had said.           |
-|              1839 | I remembered more after that.                          |
-|              1843 | I remembered what she had mentioned to me.             |
-|              1844 | I remembered “obedience,” and did as I was told.       |
-|              1846 | I remembered his chaff in that hour.                   |
-|              1849 | I remembered her.                                      |
-|              1853 | I remembered it, and that’s why we are here now.       |
-|              1854 | I remembered well.                                     |
-|              1857 | I remembered two.                                      |
-|              1861 | I remembered the face at once.                         |
-|              1863 | I remembered her face.                                 |
-|              1864 | I remembered the strange Omen of the Camel’s Hoof!     |
-|              1865 | I remembered some of Charlie’s confidences.            |
-|              1866 | I remembered something.                                |
-|              1867 | I remembered his outburst against Rosetta Rosa.        |
-|              1868 | I remembered his drawn face at my question.            |
-|              1869 | I remembered of reading about his experience.          |
-|              1871 | I remembered,” she said very low, “that night.         |
-|              1872 | I remembered.                                          |
+|              1819 | I remembered it all.                                   |
+|              1821 | I remembered my obligations to him.                    |
+|              1822 | I remembered only the charm and the opportunity.       |
+|              1823 | I remembered your inexhaustible kindness.              |
+|              1835 | I remembered Lord Nithisdale’s escape in ’15.          |
+|              1836 | I remembered her–and her name.                         |
+|              1839 | I remembered what Mrs. Parsley had said.               |
+|              1841 | I remembered so many things–oh, so many!               |
+|              1842 | I remembered no barrier.                               |
+|              1843 | I remembered the name Waikatakata.                     |
+|              1847 | I remembered the boy Madame Tank had told about.       |
+|              1851 | I remembered him very well.                            |
+|              1855 | I remembered that this was Paris.                      |
+|              1856 | I remembered the suggestion of the Crooked One.        |
+|              1857 | I remembered to have seen the figures somewhere.       |
+|              1859 | I remembered your motor-car was waiting at the gates.  |
+|              1860 | I remembered what I came for and got down my camera.   |
+|              1861 | I remembered that gala day when we christened it.      |
+|              1862 | I remembered later that I had not done so.             |
+|              1863 | I remembered.                                          |
+|              1864 | I remembered them now, and discerned his meaning.      |
+|              1865 | I remembered now.                                      |
+|              1866 | I remembered that.                                     |
+|              1867 | I remembered you kindly, with real gratitude, indeed.  |
+|              1868 | I remembered how those girls out West bragged.)        |
+|              1870 | I remembered him perfectly.                            |
+|              1871 | I remembered the gray stranger’s warning.              |
+|              1872 | I remembered the name, Jaime de Oteros.                |
 |              1873 | I remembered but one conversation during that wait.    |
-|              1874 | I remembered Joseph.                                   |
-|              1875 | I remembered her shy timidity, her innocence.          |
-|              1876 | I remembered the incident well.                        |
-|              1877 | I remembered your invitation, Mrs. Aikens.             |
+|              1874 | I remembered it was your wedding-day.                  |
+|              1875 | I remembered, and said so.                             |
+|              1876 | I remembered afterward that luck was the word he used. |
 |              1878 | I remembered so quick it stopped me.                   |
-|              1879 | I remembered what you’d said, too, Dan.                |
-|              1880 | I remembered my first day in the city.                 |
-|              1881 | I remembered this with forebodings.                    |
-|              1883 | I remembered Alex’s instructions: ’Watch out for gas.  |
-|              1894 | I remembered your picture.                             |
-|              1903 | I remembered the strange voice that had instructed me. |
-|              1904 | I remembered Aarl!                                     |
-|              1916 | I remembered the money.                                |
-|              1923 | I remembered the library book and almost went back.    |
+|              1881 | I remembered Augustus dimly.                           |
+|              1882 | I remembered my scarf.                                 |
+|              1884 | I remembered. . . .                                    |
+|              1885 | I remembered the two larks.                            |
+|              1887 | I remembered her.                                      |
+|              1888 | I remembered him asking.                               |
+|              1890 | I remembered Mrs. Inglethorp’s dying words.            |
+|              1892 | I remembered without remembering that I remembered.    |
+|              1894 | I remembered it to-day.                                |
+|              1918 | I remembered that once I had liked cigarettes.         |
+|              1933 | I remembered the first Lindbergh.                      |
