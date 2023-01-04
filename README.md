@@ -139,7 +139,7 @@ batches <- split(pafs, ceiling(seq_along(pafs)/50))
 
 setwd(path_to_out_folder)
 
-clust <- parallel::makeCluster(10)
+clust <- parallel::makeCluster(7)
 parallel::clusterExport(cl = clust,
                         varlist = c('pg_tokenize_sentences',
                                     'pg_extract_text',
@@ -160,207 +160,74 @@ pg_meta <- read.csv('metadata.csv')
 
 ## Simple regex search
 
-### Search in parallel
-
 ``` r
-pg_search_bookwise <- function(x, 
-                               pattern, 
-                               book_sample = NULL,
-                               cores = 6){
-  
-  search_bookwise <- function(x, pattern){ 
-    lapply(x, function(q){
-      y <- readRDS(q)
-      subset(y, grepl(pattern, text)) }) |> 
-      data.table::rbindlist() }
-  
-  if(!is.null(book_sample)){x <- sample(x, book_sample)}
-  batches <- split(x, ceiling(seq_along(x)/50))
-  
-  clust <- parallel::makeCluster(cores)
-  parallel::clusterExport(cl = clust,
-                          varlist = c('search_bookwise',
-                                      'batches'),
-                          envir = environment())
-  
-  out <- pbapply::pblapply(X = batches, 
-                    FUN = function(x) search_bookwise(x, 
-                                                      pattern = pattern), 
-                    cl = clust)
-  
-  parallel::stopCluster(clust)
-  out1 <- out |> data.table::rbindlist()
-  out1[, doc_id := gsub('\\..*$', '', doc_id)]
-  return(out1)
-}
-```
-
-### Output
-
-``` r
-sentences <- list.files(path = path_to_out_folder,
-                        full.names = T)
+devtools::install_github("jaytimm/gbr")
 ```
 
 ``` r
-library(dplyr)
-sentences |> 
+gbr::gbsearch(pattern = '^I remembered',
+              book_sample = 10000,
+              x = path_to_out_folder) |>
   
-  pg_search_bookwise(pattern = '^I remember ',
-                     book_sample = 20000,
-                     cores = 10) |>
-  
-  left_join(pg_meta, by = c('doc_id' = 'id')) |>
-  na.omit() |>
-  mutate(text = gsub('"$|”$', '', text)) |>
-  distinct(text, .keep_all = T) |>
-  filter(nchar(text) < 55) |>
-  group_by(authoryearofbirth) |>
-  slice(1) |> ungroup() |>
-  select(authoryearofbirth, text) |>
-  arrange(authoryearofbirth) |>
+  gbr::gbclean(n = 1) |>
   knitr::kable()
 ```
 
 | authoryearofbirth | text                                                   |
 |------------------:|:----------------------------------------------------|
-|              -750 | I remember well when thou didst go to Troy.            |
-|              -106 | I remember Albinus the ex-consul and Sp.               |
-|              1564 | I remember his name.                                   |
-|              1670 | I remember it, and it is true.                         |
-|              1672 | I remember some Years ago an Instance of this Kind.    |
-|              1720 | I remember a ridiculous instance of this sort.         |
-|              1721 | I remember that!                                       |
-|              1728 | I remember them both last Voyage.                      |
-|              1746 | I remember the veneration in which he was held.        |
-|              1759 | I remember but too well!                               |
-|              1763 | I remember well that it was owing to Mr. Fox.          |
-|              1767 | I remember it as well as if it was this instant.       |
-|              1769 | I remember that name.                                  |
-|              1771 | I remember feeling just such a pain but once before.   |
-|              1772 | I remember well The fatal day.                         |
-|              1773 | I remember an interesting passage of history.          |
-|              1775 | I remember Miss Wetheral’s taste for reading.          |
-|              1779 | I remember meeting him at Earl Grey’s at dinner.       |
-|              1780 | I remember the *first* crier of “young lambs to sell!  |
-|              1784 | I remember an instance of this.                        |
-|              1785 | I remember some Life Guardsmen helped me on.           |
-|              1788 | I remember an instance of his skill in the small way.  |
-|              1790 | I remember a droll proof of this.                      |
-|              1792 | I remember this was the case in Ireland, in 1823.      |
-|              1793 | I remember the first day with perfect distinctness.    |
-|              1794 | I remember praying, wrestling, and striving with God.  |
-|              1797 | I remember a story of a labourer and his dying wife.   |
-|              1798 | I remember going ashore on Good Friday.                |
-|              1800 | I remember nothing that passed during the day.         |
-|              1802 | I remember as though a superior will made me do so.    |
-|              1803 | I remember too well my first dose of castor-oil.       |
-|              1804 | I remember nothing else in this room.                  |
-|              1806 | I remember too how I wrote or spoke of such.           |
-|              1807 | I remember two he told of Dean Mansel.                 |
-|              1809 | I remember it well, being then seven years old.        |
-|              1810 | I remember his reading there with Mr. Ness.            |
-|              1811 | I remember what it was before the houses were built.   |
-|              1812 | I remember that, for I woke in a tremble.              |
-|              1814 | I remember Walter Heathfield’s features well.          |
-|              1815 | I remember to have read in Fr.                         |
-|              1816 | I remember scores of such hours of real agony.         |
-|              1817 | I remember the night well.                             |
-|              1818 | I remember only the first two lines….                  |
-|              1819 | I remember I spoke very feebly.                        |
-|              1820 | I remember a case in point.                            |
-|              1821 | I remember there was real feeling in me, too.          |
-|              1822 | I remember it all well as ef it want but yisterday.    |
-|              1823 | I remember crying out with tears.                      |
-|              1824 | I remember all that is necessary.                      |
-|              1825 | I remember him, but I care not for him.                |
-|              1826 | I remember once――‘ ‘Come, papa!’                       |
-|              1827 | I remember a few lines.                                |
-|              1828 | I remember Charlie so well; may I speak of him to her? |
-|              1829 | I remember saying, “Oh, don’t do that.                 |
-|              1830 | I remember perfectly where Fabio keeps his provisions. |
-|              1831 | I remember my uncle’s death.                           |
-|              1832 | I remember clearly the arrival of the news.            |
-|              1833 | I remember *him* before the young uns was born.        |
-|              1834 | I remember when Kennedy was put out of possession.     |
-|              1835 | I remember now.                                        |
-|              1836 | I remember going out in ’53 with Hank Boompirater.     |
-|              1837 | I remember that evening as if it were only yesterday.  |
-|              1838 | I remember that I have a conscience.                   |
-|              1839 | I remember my cousins—-” “Great musical talent!        |
-|              1840 | I remember feeling very proud of my good landfall.     |
-|              1841 | I remember distinctly one thing papa said.             |
-|              1842 | I remember Maryan told me something of this.           |
-|              1843 | I remember some of those winter mornings.              |
-|              1844 | I remember it at night in my bed, and I am afraid.     |
-|              1845 | I remember with pleasure a visit to Fanny Kemble—Mrs.  |
-|              1846 | I remember Hardin coming himself.                      |
-|              1847 | I remember hearing him testify as a witness to a will. |
-|              1848 | I remember the very day he had his tail broken off.    |
-|              1849 | I remember a little Hindustani.                        |
-|              1850 | I remember every apple tree being planted.             |
-|              1851 | I remember your telling me so.                         |
-|              1852 | I remember it was real pretty when we first got it.    |
-|              1853 | I remember it just as if it was yesterday.             |
-|              1854 | I remember it.                                         |
-|              1855 | I remember the next few days very well.                |
-|              1856 | I remember our first night at the new camp.            |
-|              1857 | I remember how sick I felt wriggling in that slime.    |
-|              1858 | I remember one close call I had, though.               |
-|              1859 | I remember her well.                                   |
-|              1860 | I remember the shape of the head now.                  |
-|              1861 | I remember now, I smelled smoke or thought I did.      |
-|              1862 | I remember that fog well.                              |
-|              1863 | I remember your name too.                              |
-|              1864 | I remember someone exclaiming “He’s bled to death!     |
-|              1865 | I remember him well.                                   |
-|              1866 | I remember that I thought Edmond Laforce insane.       |
-|              1867 | I remember another couple up on the hillside.          |
-|              1868 | I remember his christening as if it was yesterday.     |
-|              1869 | I remember it as plainly as if it happened yesterday.  |
-|              1870 | I remember as clear as crystal!                        |
-|              1871 | I remember how long he was reading it.                 |
-|              1872 | I remember hearing him say: “Oh!                       |
-|              1873 | I remember seeing her once.                            |
-|              1874 | I remember Jack’s habits of old.                       |
-|              1875 | I remember being stricken with it.                     |
-|              1876 | I remember their queer get-ups.                        |
-|              1877 | I remember the words very well, and they were these.   |
-|              1878 | I remember that Essenes are physicians.                |
-|              1879 | I remember well the day I was leaving.                 |
-|              1880 | I remember two types of merchants at Constantinople.   |
-|              1881 | I remember one tremendous march.                       |
-|              1882 | I remember thinking: ’This is awkward.                 |
-|              1883 | I remember a Captain in the Royal Marines….            |
-|              1884 | I remember that.                                       |
-|              1885 | I remember Senhor Dexter.                              |
-|              1886 | I remember once, my throat….                           |
-|              1887 | I remember that brother o’ yours.                      |
-|              1888 | I remember that evening so well.                       |
-|              1889 | I remember well.                                       |
-|              1890 | I remember parts quite vividly, every now and then….   |
-|              1891 | I remember that the entraining was poor.               |
-|              1893 | I remember nothing!                                    |
-|              1894 | I remember his enthusiasm over the weapon.             |
-|              1895 | I remember Dad mentioned a time limit.                 |
-|              1896 | I remember I ran away from home once.                  |
-|              1897 | I remember that rock, \_perfectly!                     |
-|              1898 | I remember a bit of my classics.                       |
-|              1899 | I remember hiding from Tatiana behind a drapery.       |
-|              1903 | I remember some of the things he used to say.          |
-|              1904 | I remember the serials.                                |
-|              1905 | I remember now, too.                                   |
-|              1906 | I remember our garden just outside our yard.           |
-|              1909 | I remember reading about that.                         |
-|              1910 | I remember you used to be shy.                         |
-|              1913 | I remember an evening in April 1939.                   |
-|              1915 | I remember that sermon, now.                           |
-|              1917 | I remember getting six pine trees from a nursery.      |
-|              1918 | I remember Hungary–its ancient horror.                 |
-|              1919 | I remember then.                                       |
-|              1920 | I remember the first time I went to the Continent.     |
-|              1925 | I remember there was some trouble….                    |
-|              1927 | I remember the trip back to earth.                     |
-|              1928 | I remember all of us agreeing upon that.               |
-|              1933 | I remember once, I went to a circus, or a sideshow.    |
-|              1961 | I remember that day very well.                         |
+|              1763 | I remembered the glowworms and millipeds.              |
+|              1793 | I remembered the spectre.                              |
+|              1799 | I remembered the dressmaker’s smile!                   |
+|              1805 | I remembered it first.                                 |
+|              1806 | I remembered everything to the smallest incident.      |
+|              1807 | I remembered it, it was sich an outlandish name like.  |
+|              1814 | I remembered my companion’s remark, and felt no fear.  |
+|              1819 | I remembered that you had once given me hope.          |
+|              1821 | I remembered him quite well, however.                  |
+|              1824 | I remembered nothing but the horror of his situation.  |
+|              1828 | I remembered it yesterday, when you had left.          |
+|              1830 | I remembered, aloud and abruptly.                      |
+|              1831 | I remembered our visit to the Merceria.                |
+|              1835 | I remembered the circumstance very well.               |
+|              1836 | I remembered the man’s face now, but not his name.     |
+|              1838 | I remembered what I had seen, and bided my time.       |
+|              1839 | I remembered it all perfectly.                         |
+|              1841 | I remembered it quite well.                            |
+|              1842 | I remembered its former decor.                         |
+|              1844 | I remembered “obedience,” and did as I was told.       |
+|              1846 | I remembered the whole collection.                     |
+|              1848 | I remembered the voyage home far too well for my age.  |
+|              1850 | I remembered I had talked easily with her.             |
+|              1852 | I remembered one of them well.                         |
+|              1853 | I remembered it, and that’s why we are here now.       |
+|              1854 | I remembered every single thing that had happened.     |
+|              1856 | I remembered my dream and took comfort.                |
+|              1857 | I remembered what I should never have forgotten.       |
+|              1859 | I remembered my promise to you, and here I am.         |
+|              1861 | I remembered these things afterwards.                  |
+|              1862 | I remembered the divine halo of his smile.             |
+|              1863 | I remembered.                                          |
+|              1865 | I remembered that you are joining your regiment.       |
+|              1866 | I remembered only those other and greater things.      |
+|              1867 | I remembered something.                                |
+|              1868 | I remembered how those girls out West bragged.)        |
+|              1869 | I remembered a short story I had read once.            |
+|              1870 | I remembered him perfectly.                            |
+|              1871 | I remembered the lad that was Jimmie Tool.             |
+|              1872 | I remembered, also how I had threatened her.           |
+|              1874 | I remembered he lived in Jermyn Street.                |
+|              1876 | I remembered Lafayette.                                |
+|              1877 | I remembered your invitation, Mrs. Aikens.             |
+|              1879 | I remembered the public fields of my own age.          |
+|              1881 | I remembered well the time—I had a sore foot.          |
+|              1884 | I remembered something M. Briavoine had said.          |
+|              1885 | I remembered you from Monte Carlo, you see.            |
+|              1887 | I remembered the gentleness of the man with her.       |
+|              1889 | I remembered the engineer’s statement, but was silent. |
+|              1890 | I remembered how you had lost your father.             |
+|              1891 | I remembered the wind.                                 |
+|              1894 | I remembered your picture.                             |
+|              1911 | I remembered my name, but that’s about all….           |
+|              1913 | I remembered well your mention of this shop!           |
+|              1924 | I remembered now.                                      |
+|              1933 | I remembered the first Lindbergh.                      |

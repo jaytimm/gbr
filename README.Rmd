@@ -155,7 +155,7 @@ batches <- split(pafs, ceiling(seq_along(pafs)/50))
 
 setwd(path_to_out_folder)
 
-clust <- parallel::makeCluster(10)
+clust <- parallel::makeCluster(7)
 parallel::clusterExport(cl = clust,
                         varlist = c('pg_tokenize_sentences',
                                     'pg_extract_text',
@@ -181,71 +181,29 @@ pg_meta <- read.csv('metadata.csv')
 ```
 
 
+```{r eval=FALSE, include=FALSE}
+setwd('/home/jtimm/pCloudDrive/GitHub/packages/project-gutenberg')
+usethis::use_data(pg_meta, overwrite=TRUE)
+```
+
 
 
 ## Simple regex search
 
-### Search in parallel
-
-```{r}
-pg_search_bookwise <- function(x, 
-                               pattern, 
-                               book_sample = NULL,
-                               cores = 6){
-  
-  search_bookwise <- function(x, pattern){ 
-    lapply(x, function(q){
-      y <- readRDS(q)
-      subset(y, grepl(pattern, text)) }) |> 
-      data.table::rbindlist() }
-  
-  if(!is.null(book_sample)){x <- sample(x, book_sample)}
-  batches <- split(x, ceiling(seq_along(x)/50))
-  
-  clust <- parallel::makeCluster(cores)
-  parallel::clusterExport(cl = clust,
-                          varlist = c('search_bookwise',
-                                      'batches'),
-                          envir = environment())
-  
-  out <- pbapply::pblapply(X = batches, 
-                    FUN = function(x) search_bookwise(x, 
-                                                      pattern = pattern), 
-                    cl = clust)
-  
-  parallel::stopCluster(clust)
-  out1 <- out |> data.table::rbindlist()
-  out1[, doc_id := gsub('\\..*$', '', doc_id)]
-  return(out1)
-}
+```{r eval=FALSE}
+devtools::install_github("jaytimm/gbr")
 ```
 
-
-
-### Output
-
-```{r}
-sentences <- list.files(path = path_to_out_folder,
-                        full.names = T)
-```
 
 
 ```{r message=FALSE, warning=FALSE}
-library(dplyr)
-sentences |> 
+gbr::gbsearch(pattern = '^I remembered',
+              book_sample = 10000,
+              x = path_to_out_folder) |>
   
-  pg_search_bookwise(pattern = '^I remember ',
-                     book_sample = 20000,
-                     cores = 10) |>
-  
-  left_join(pg_meta, by = c('doc_id' = 'id')) |>
-  na.omit() |>
-  mutate(text = gsub('"$|”$', '', text)) |>
-  distinct(text, .keep_all = T) |>
-  filter(nchar(text) < 55) |>
-  group_by(authoryearofbirth) |>
-  slice(1) |> ungroup() |>
-  select(authoryearofbirth, text) |>
-  arrange(authoryearofbirth) |>
+  gbr::gbclean(n = 1) |>
   knitr::kable()
 ```
+
+
+
