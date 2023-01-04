@@ -12,10 +12,10 @@
 #' @rdname gbsearch
 #'
 gbsearch <- function(pattern = '^I believe',
-                   x = '/home/jtimm/gutenberg/data/sentences/',
-                   book_sample = 25000,
-                   ignore.case = T,
-                   cores = 12){
+                     x = '/home/jtimm/gutenberg/data/sentences/',
+                     book_sample = 25000,
+                     ignore.case = T,
+                     cores = 12){
 
   ss <- list.files(path = x, full.names = T)
 
@@ -54,7 +54,7 @@ gbsearch <- function(pattern = '^I believe',
   out1[, doc_id := gsub('\\..*$', '', doc_id)]
 
   out1 <- merge(out1,
-                gutensearch::pg_meta,
+                gbr::pg_meta,
                 by.x = 'doc_id',
                 by.y = 'id')
   return(out1)
