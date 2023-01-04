@@ -8,10 +8,8 @@ output:
 
 # User friendly extensions to Project Gutenberg
 
-> I remembered the glowworms and millipeds. 
-
-> I remembered the spectre.
-
+> I remembered the glowworms and millipeds.  
+> I remembered the spectre.  
 > I remembered the dressmaker's smile!! 
 
 
