@@ -180,20 +180,19 @@ subs <- gbr::gb_subset(x = 10,
 ### Build corpus
 
 ``` r
-library(dplyr)
-mcorp <- subs |> 
-  gbr::gb_build_corpus() 
-
-mcorp |> sample_n(5) |> knitr::kable()
+subs |> 
+  gbr::gb_build_corpus() |>
+  dplyr::sample_n(5) |> 
+  knitr::kable()
 ```
 
-| doc_id       | text                                                                                                     |
-|:--------|:--------------------------------------------------------------|
-| PG69257.338  | She snapped her bag shut and stood up.                                                                   |
-| PG56338.75   | I came to these hills just to develope the soul.”                                                        |
-| PG22357.3127 | Daddy departed upon his mission intending to be gruff, and my word, he can be quite gruff when he likes! |
-| PG18172.252  | He paused.                                                                                               |
-| PG67121.4247 | Zoar laughed.                                                                                            |
+| doc_id       | text                                                                                                                                           |
+|:------|:----------------------------------------------------------------|
+| PG59774.1493 | There were no matches there, and I suddenly realised that my extremities were cold.                                                            |
+| PG21638.617  | And I don’t think, at such a time, I should trust Robins to bring them.”                                                                       |
+| PG60374.1175 | “Wallabaloo,” said the Clockwork man, faintly, “Wum–Wum–” “Yes, we know all about that,” said the constable, “but you take my tip and go ’ome. |
+| PG59774.5953 | There followed a period of silence.                                                                                                            |
+| PG624.1562   | The prophet, who had guessed the meaning of God, must dicker for the price of the revelation, and the poet hawk his visions in printers’ row.  |
 
 ### Simple regex search
 
@@ -204,35 +203,36 @@ gbr::gb_subset(x = 5000) |>
   knitr::kable()
 ```
 
-| authoryearofbirth | text                                                  |
+| authoryearofbirth | text                                                   |
 |------------------:|:----------------------------------------------------|
-|              1799 | I remembered all that, you see,” said the fisherman.  |
-|              1806 | I remembered this fact, and resolved to profit by it. |
-|              1810 | I remembered it at once.                              |
-|              1814 | I remembered my companion’s remark, and felt no fear. |
-|              1818 | I remembered I had been a Sioux warrior.              |
-|              1819 | I remembered my vow to you.                           |
-|              1821 | I remembered him quite well, however.                 |
-|              1822 | I remembered her parting words.                       |
-|              1824 | I remembered at last.                                 |
-|              1828 | I remembered it yesterday, when you had left.         |
-|              1838 | I remembered Marny’s warning and kept still.          |
-|              1850 | I remembered that I belonged to France.               |
-|              1857 | I remembered that day.                                |
-|              1860 | I remembered his modesty about Aqua Marine.           |
-|              1861 | I remembered the pistol in my box.                    |
-|              1862 | I remembered something from “Alice.                   |
-|              1863 | I remembered my dream, and hurried back to the house. |
-|              1864 | I remembered–ha!                                      |
-|              1867 | I remembered that we were alone in the place.         |
-|              1869 | I remembered then certain other little things.        |
-|              1870 | I remembered seeing barges in Bensersiel harbour.     |
-|              1873 | I remembered but one conversation during that wait.   |
-|              1875 | I remembered her shy timidity, her innocence.         |
-|              1876 | I remembered the niblick shot on the fourteenth.      |
-|              1879 | I remembered now.                                     |
-|              1880 | I remembered Kennedy’s parting words.                 |
-|              1881 | I remembered well the time—I had a sore foot.         |
-|              1886 | I remembered all this.                                |
-|              1899 | I remembered the anguished screams.                   |
-|              1915 | I remembered hearing blasters rip occasionally.       |
+|              1743 | I remembered seeing some empty casks in the hold.      |
+|              1799 | I remembered the dressmaker’s smile!                   |
+|              1803 | I remembered the words of the ostler in the mountains. |
+|              1814 | I remembered my companion’s remark, and felt no fear.  |
+|              1824 | I remembered there were rats in it.                    |
+|              1830 | I remembered, aloud and abruptly.                      |
+|              1831 | I remembered all that when I opened my eyes again.     |
+|              1841 | I remembered so many things–oh, so many!               |
+|              1846 | I remembered your face.                                |
+|              1850 | I remembered everything now.                           |
+|              1852 | I remembered his warning to me and fled.               |
+|              1855 | I remembered yesterday’s doings, and groaned.          |
+|              1857 | I remembered my vow.                                   |
+|              1861 | I remembered the pistol in my box.                     |
+|              1863 | I remembered Eloise’s words: “Little Carl is a girl.   |
+|              1864 | I remembered you very well–very well, indeed.          |
+|              1865 | I remembered it last night.                            |
+|              1867 | I remembered that we were alone in the place.          |
+|              1869 | I remembered then certain other little things.         |
+|              1870 | I remembered him perfectly.                            |
+|              1874 | I remembered he lived in Jermyn Street.                |
+|              1876 | I remembered the niblick shot on the fourteenth.       |
+|              1879 | I remembered it all but the shining cup.               |
+|              1882 | I remembered when Dr. Maynard had taken that picture.  |
+|              1885 | I remembered you from Monte Carlo, you see.            |
+|              1887 | I remembered the gentleness of the man with her.       |
+|              1892 | I remembered exactly what movements I had to make.     |
+|              1902 | I remembered.                                          |
+|              1909 | I remembered suddenly.                                 |
+|              1911 | I remembered how he resembled the lanee-assistant.     |
+|              1924 | I remembered now.                                      |

@@ -231,11 +231,10 @@ subs <- gbr::gb_subset(x = 10,
 ### Build corpus
 
 ```{r message=FALSE, warning=FALSE}
-library(dplyr)
-mcorp <- subs |> 
-  gbr::gb_build_corpus() 
-
-mcorp |> sample_n(5) |> knitr::kable()
+subs |> 
+  gbr::gb_build_corpus() |>
+  dplyr::sample_n(5) |> 
+  knitr::kable()
 ```
 
 
