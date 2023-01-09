@@ -1,14 +1,14 @@
 
 #' Clean and filter results
 #'
-#' @name gbclean
+#' @name gb_examples
 #' @param x df output from search
 #' @param n An integer
 #'
 #' @export
 #' @rdname gbclean
 #'
-gbclean <- function(x, n = 2){
+gb_examples <- function(x, n = 2){
 
   x |>
     na.omit() |>

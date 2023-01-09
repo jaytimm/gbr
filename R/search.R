@@ -1,32 +1,31 @@
 
 #' Search gutenberg
 #'
-#' @name gbsearch
+#' @name gb_search
+#' @param x A character vector
 #' @param pattern a character string
-#' @param x a file path
-#' @param book_sample An integer
 #' @param cores an integer
 #' @return A data frame
 #'
 #' @export
-#' @rdname gbsearch
+#' @rdname gb_search
 #'
-gbsearch <- function(pattern = '^I believe',
-                     x = '/home/jtimm/gutenberg/data/sentences/',
-                     book_sample = 25000,
-                     ignore.case = T,
-                     cores = 12){
 
-  ss <- list.files(path = x, full.names = T)
+
+## x <- batches[[1]][1]
+gb_search <- function(x,
+                      pattern,
+                      ignore.case = T,
+                      cores = 5){
 
   search_bookwise <- function(x, pattern){
 
     j <- lapply(x, function(q){
 
-      tryCatch(y <- readRDS(q) |>
+      tryCatch(readRDS(q) |>
                  dplyr::filter(grepl(pattern,
-                               text,
-                               ignore.case = ignore.case))
+                                     text,
+                                     ignore.case = ignore.case))
                , error=function(e) NULL)
       })
 
@@ -34,23 +33,24 @@ gbsearch <- function(pattern = '^I believe',
     j0 |> data.table::rbindlist()
     }
 
-
-  if(!is.null(book_sample)){ss <- sample(ss, book_sample)}
-  batches <- split(ss, ceiling(seq_along(ss)/100))
-
+  batches <- split(x, ceiling(seq_along(x)/25))
+  p0 <- pattern
 
   clust <- parallel::makeCluster(cores)
   parallel::clusterExport(cl = clust,
                           varlist = c('search_bookwise',
+                                      'p0',
                                       'batches'),
                           envir = environment())
 
   out <- pbapply::pblapply(X = batches,
-                           FUN = function(x) search_bookwise(x, pattern = pattern),
+                           FUN = function(x) search_bookwise(x, pattern = p0),
                            cl = clust)
 
   parallel::stopCluster(clust)
+
   out1 <- out |> data.table::rbindlist()
+
   out1[, doc_id := gsub('\\..*$', '', doc_id)]
 
   out1 <- merge(out1,
@@ -59,9 +59,3 @@ gbsearch <- function(pattern = '^I believe',
                 by.y = 'id')
   return(out1)
 }
-
-
-
-
-
-

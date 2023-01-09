@@ -185,26 +185,68 @@ pg_meta <- read.csv('metadata.csv')
 
 
 ```{r eval=FALSE, include=FALSE}
+pg_meta <- pg_meta |>
+  mutate(subjects = gsub('\\{|\\}', '', subjects)) |>
+  mutate(subjects = gsub('"', "'", subjects)) |>
+  tidyr::separate_rows(subjects, sep = "',") |>
+  mutate(subjects = gsub("^'|'$|^ '", "", subjects)) |>
+  mutate(subjects = trimws(subjects)) |> 
+  group_by(across(c(-subjects))) |>
+  summarize(subjects = paste0(subjects, collapse = ' | ')) |>
+  ungroup()
+
+pg_subjects <- pg_meta |>
+  select(id, authoryearofbirth, language, subjects) |>
+  tidyr::separate_rows(subjects, sep = " \\| ")
+
 setwd('/home/jtimm/pCloudDrive/GitHub/packages/project-gutenberg')
 usethis::use_data(pg_meta, overwrite=TRUE)
+usethis::use_data(pg_subjects, overwrite=TRUE)
 ```
 
 
 
-## Simple regex search
+
+
+## Package
 
 ```{r eval=FALSE}
 devtools::install_github("jaytimm/gbr")
 ```
 
 
+### Metadata
+
+```{r}
+subs <- gbr::gb_subset(x = 10,
+                       min_birth_year = 1850,
+                       max_birth_year = 1900,
+                       subj = 'Science fiction',
+                       lang = 'en',
+                       filepath = path_to_out_folder) 
+```
+
+
+
+### Build corpus
+
+```{r}
+library(dplyr)
+mcorp <- subs |> 
+  gbr::gb_build_corpus() 
+
+mcorp |> sample_n(5) |> knitr::kable()
+```
+
+
+
+
+### Simple regex search
 
 ```{r message=FALSE, warning=FALSE}
-gbr::gbsearch(pattern = '^I remembered',
-              book_sample = 10000,
-              x = path_to_out_folder) |>
-  
-  gbr::gbclean(n = 1) |>
+gbr::gb_subset(x = 5000) |>
+  gbr::gb_search(pattern = '^I remembered', cores = 12) |>
+  gbr::gb_examples(n = 1) |>
   knitr::kable()
 ```
 
