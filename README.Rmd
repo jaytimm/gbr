@@ -230,7 +230,7 @@ subs <- gbr::gb_subset(x = 10,
 
 ### Build corpus
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 mcorp <- subs |> 
   gbr::gb_build_corpus() 

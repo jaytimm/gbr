@@ -181,33 +181,19 @@ subs <- gbr::gb_subset(x = 10,
 
 ``` r
 library(dplyr)
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 mcorp <- subs |> 
   gbr::gb_build_corpus() 
 
 mcorp |> sample_n(5) |> knitr::kable()
 ```
 
-| doc_id       | text                                                                                                                                                                                                                                                                                                                                                                                                    |
-|:---|:-------------------------------------------------------------------|
-| PG68815.5617 | “I don’t know,” Kinnison answered the unasked question, “but I can find out.”                                                                                                                                                                                                                                                                                                                           |
-| PG8684.1066  | Hostages were taken, as usual, these including Major Henry L. Higginson, President A. Lawrence Lowell of Harvard University, Major James M. Curley, Edward A. Filene, Margaret Deland, William A. Paine, Ellery Sedgwick, Mrs. John L. Gardner, Charles W. Eliot, Louis D. Brandeis, Bishop William Lawrence, Amy Lowell, T. Jefferson Coolidge, Thomas W. Lawson, Guy Murchie, and Cardinal O’Connell. |
-| PG68815.716  | It’s quite possible that she was hit hard enough to lay out most of her crew cold–anyway enough of them to put her out of control.                                                                                                                                                                                                                                                                      |
-| PG61698.882  | “Don’t worry–I’ll be careful of them.                                                                                                                                                                                                                                                                                                                                                                   |
-| PG26637.1331 | “I’ll be perfectly candid with you, Mr. Ewart,” he replied.                                                                                                                                                                                                                                                                                                                                             |
+| doc_id       | text                                                                                                     |
+|:--------|:--------------------------------------------------------------|
+| PG69257.338  | She snapped her bag shut and stood up.                                                                   |
+| PG56338.75   | I came to these hills just to develope the soul.”                                                        |
+| PG22357.3127 | Daddy departed upon his mission intending to be gruff, and my word, he can be quite gruff when he likes! |
+| PG18172.252  | He paused.                                                                                               |
+| PG67121.4247 | Zoar laughed.                                                                                            |
 
 ### Simple regex search
 
@@ -218,40 +204,35 @@ gbr::gb_subset(x = 5000) |>
   knitr::kable()
 ```
 
-| authoryearofbirth | text                                                   |
+| authoryearofbirth | text                                                  |
 |------------------:|:----------------------------------------------------|
-|              1745 | I remembered!                                          |
-|              1802 | I remembered him well.                                 |
-|              1806 | I remembered everything to the smallest incident.      |
-|              1814 | I remembered the fire on the prairie.                  |
-|              1821 | I remembered thee on the cross.                        |
-|              1828 | I remembered it all then.                              |
-|              1831 | I remembered that I had salt in the cabin.             |
-|              1835 | I remembered Lord Nithisdale’s escape in ’15.          |
-|              1838 | I remembered Mr. Yocomb’s helping me to my room.       |
-|              1839 | I remembered more after that.                          |
-|              1844 | I remembered my fable and flinched.                    |
-|              1850 | I remembered that I belonged to France.                |
-|              1857 | I remembered that I had left it so when I came to bed. |
-|              1859 | I remembered it directly I saw it again.               |
-|              1861 | I remembered my experience in the elevated train.      |
-|              1862 | I remembered now.                                      |
-|              1863 | I remembered.                                          |
-|              1864 | I remembered the name at once.                         |
-|              1866 | I remembered what you had said.                        |
-|              1867 | I remembered not to tell him that.                     |
-|              1869 | I remembered a short story I had read once.            |
-|              1872 | I remembered, also how I had threatened her.           |
-|              1874 | I remembered suddenly my last talk with him.           |
-|              1875 | I remembered that I was not yet twenty.                |
-|              1880 | I remembered no more.                                  |
-|              1881 | I remembered–remembered hard.                          |
-|              1887 | I remembered her.                                      |
-|              1889 | I remembered that she had left in disgrace.            |
-|              1890 | I remembered how you had lost your father.             |
-|              1891 | I remembered the wind.                                 |
-|              1892 | I remembered without remembering that I remembered.    |
-|              1895 | I remembered that I did not know her name.             |
-|              1903 | I remembered the strange voice that had instructed me. |
-|              1909 | I remembered the dream, the ship with its broken sail. |
-|              1933 | I remembered the first Lindbergh.                      |
+|              1799 | I remembered all that, you see,” said the fisherman.  |
+|              1806 | I remembered this fact, and resolved to profit by it. |
+|              1810 | I remembered it at once.                              |
+|              1814 | I remembered my companion’s remark, and felt no fear. |
+|              1818 | I remembered I had been a Sioux warrior.              |
+|              1819 | I remembered my vow to you.                           |
+|              1821 | I remembered him quite well, however.                 |
+|              1822 | I remembered her parting words.                       |
+|              1824 | I remembered at last.                                 |
+|              1828 | I remembered it yesterday, when you had left.         |
+|              1838 | I remembered Marny’s warning and kept still.          |
+|              1850 | I remembered that I belonged to France.               |
+|              1857 | I remembered that day.                                |
+|              1860 | I remembered his modesty about Aqua Marine.           |
+|              1861 | I remembered the pistol in my box.                    |
+|              1862 | I remembered something from “Alice.                   |
+|              1863 | I remembered my dream, and hurried back to the house. |
+|              1864 | I remembered–ha!                                      |
+|              1867 | I remembered that we were alone in the place.         |
+|              1869 | I remembered then certain other little things.        |
+|              1870 | I remembered seeing barges in Bensersiel harbour.     |
+|              1873 | I remembered but one conversation during that wait.   |
+|              1875 | I remembered her shy timidity, her innocence.         |
+|              1876 | I remembered the niblick shot on the fourteenth.      |
+|              1879 | I remembered now.                                     |
+|              1880 | I remembered Kennedy’s parting words.                 |
+|              1881 | I remembered well the time—I had a sore foot.         |
+|              1886 | I remembered all this.                                |
+|              1899 | I remembered the anguished screams.                   |
+|              1915 | I remembered hearing blasters rip occasionally.       |
