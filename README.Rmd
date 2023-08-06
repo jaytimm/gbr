@@ -14,6 +14,11 @@ devtools::install_github("jaytimm/gbr")
 
 
 ### Metadata
+```{r include=FALSE}
+
+path_to_out_folder <- '/home/jtimm/gutenberg/data/sentences/'
+```
+
 
 ```{r}
 subs <- gbr::gb_subset(x = 10,
